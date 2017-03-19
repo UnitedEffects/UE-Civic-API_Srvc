@@ -1,0 +1,308 @@
+paths:
+  /log/definitions:
+    get:
+      tags:
+        - Health
+      summary: How to utilize logs
+      description: Information on how to utilize logs
+      produces:
+        - application/json
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /logs:
+    get:
+      tags:
+        - Health
+      summary: ADMIN ONLY - Return all system logs
+      description: ADMIN ONLY - Return all system logs
+      produces:
+        - application/json
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /logs/{code}:
+    get:
+      tags:
+        - Health
+      summary: ADMIN ONLY - Return system logs with code specified
+      description: ADMIN ONLY - Return system logs with code specified
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      - name: code
+        type: string
+        in: path
+        required: true
+        description: Code to query
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /log/search:
+    get:
+      tags:
+        - Health
+      summary: ADMIN ONLY - Search logs for a specific keyword
+      description: ADMIN ONLY - Search logs for a specific keyword
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      - name: q
+        type: string
+        in: query
+        required: true
+        description: Search term or keyword
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /log:
+    post:
+      tags:
+        - Health
+      summary: ADMIN ONLY - Externally add a log entry
+      description: ADMIN ONLY - Externally add a log entry
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      - name: log
+        in: body
+        required: true
+        description: new log entry to be added
+        schema:
+          $ref: '#/definitions/logObject'
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /logs/range:
+    post:
+      tags:
+        - Health
+      summary: ADMIN ONLY - Return logs from a date range
+      description: ADMIN ONLY - Return logs from a date range
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      - name: log range
+        in: body
+        required: true
+        description: range to search
+        schema:
+          $ref: '#/definitions/logRange'
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Health check
+      produces:
+        - application/json
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /health/admin:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Health check
+      produces:
+        - application/json
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /civic/representatives:
+    get:
+      tags:
+        - Civic Endpoints
+      summary: A proxy for the googleapi civic service representative endpoint. Send it everything you would send that.
+      description: A proxy for the googleapi civic service representative endpoint. Send it everything you would send that.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      - name: address
+        type: string
+        in: query
+        required: true
+        description: street+city+state+zip
+      - name: roles
+        type: string
+        in: query
+        required: false
+        description: one of the roles
+      - name: roles
+        type: string
+        in: query
+        required: false
+        description: one of the roles
+      - name: roles
+        type: string
+        in: query
+        required: false
+        description: one of the roles
+      - name: roles
+        type: string
+        in: query
+        required: false
+        description: one of the roles
+      - name: roles
+        type: string
+        in: query
+        required: false
+        description: one of the roles
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /img:
+    get:
+      tags:
+        - Civic Endpoints
+      summary: Image proxy
+      description: Image proxy
+      consumes:
+        - application/json
+      produces:
+        - image/jpg
+        - image/jpeg
+        - image/png
+      parameters:
+      - name: url
+        type: string
+        in: query
+        required: true
+        description: url of the image to proxzy
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+definitions:
+  success:
+    required:
+      - err
+      - data
+    properties:
+      err:
+        type: string
+      data:
+        type: object
+  defaultError:
+    required:
+      - err
+      - data
+    properties:
+      err:
+        type: integer
+        format: int32
+      data:
+        type: string

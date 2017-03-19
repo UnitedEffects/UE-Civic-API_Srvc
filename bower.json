@@ -1,0 +1,38 @@
+{
+  "name": "ue-civic",
+  "description": "A microservice to proxy the google api civic api",
+  "main": "",
+  "authors": [
+    "Bo Motlagh <borzou@theboeffect.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "ue-auth",
+    "auth2.0",
+    "authorization",
+    "token",
+    "united",
+    "effects",
+    "api",
+    "oauth",
+    "access",
+    "splice",
+    "splicechain",
+    "postcards",
+    "payapl",
+    "freedom"
+  ],
+  "homepage": "https://github.com/UnitedEffects/UE-Civic-API_Srvc",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  }
+}
