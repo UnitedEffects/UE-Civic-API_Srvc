@@ -20,8 +20,8 @@ router.get('/', function(req, res, next) {
 });
 
 //Payment API
-router.get('/civic/representatives', civicApi.getReps);
-router.get('/img', civicApi.img);
+router.get('/civic/representatives', authApi.isChainedSocialBearer, civicApi.getReps);
+router.get('/img', authApi.isChainedSocialBearer, civicApi.img);
 
 //logs
 router.get('/log/definitions', authApi.isChainedSocialBearer, logApi.logDefinitions);
