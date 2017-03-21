@@ -14,8 +14,11 @@ var civicSchema = new mongoose.Schema({
     },
     address: {
         type: String,
-        required: true,
-        unique: true
+        required: true
+    },
+    roles: {
+        type: String,
+        required: false
     },
     data: {
         type: Object,

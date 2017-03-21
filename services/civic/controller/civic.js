@@ -24,17 +24,33 @@ var civicFactory = {
             ]
         };
 
+        var output = {};
+
         request(options)
             .then(function(result){
                 if(!result) return cb(send.failErr("Unknown issue with GoogleAPI Civic Service"), null);
-                if(result.statusCode!=200) return cb(send.failErr(result), null);
-                var output = (helper.isJson(result.body)) ? JSON.parse(result.body) : result.body;
+                if(result.statusCode!=200) return cb(send.fail500(helper.isJson(result.body) ? JSON.parse(result.body) : result.body), null);
+                output = (helper.isJson(result.body)) ? JSON.parse(result.body) : result.body;
+                return output.offices;
+            })
+            .each(function(office){
+                office.officialIndices.forEach(function(index){
+                    output.officials[index]["office"] = office.name;
+                    output.officials[index]["division"] = output.divisions[office.divisionId].name;
+                    return office;
+                })
+            })
+            .then(function(){
                 var newAddress = {
                     address: query.address,
+                    roles: roles,
                     data: output
                 };
                 civicFactory.saveAddress(newAddress, function(err, result){
-                    if(err) Log.error('Could not cache an address from civic api.', err);
+                    if(err) {
+                        console.log(err);
+                        Log.error('Could not cache an address from civic api.', err);
+                    }
                 });
                 return cb(null, send.success(output));
             })
@@ -42,8 +58,8 @@ var civicFactory = {
                 return cb(send.failErr(error), null);
             })
     },
-    findAddress: function(address, cb){
-        Civic.findOne({address: address})
+    findAddress: function(address, roles, cb){
+        Civic.findOne({address: address, roles: roles})
             .then(function(result){
                 if(!result) cb(null, null);
                 return cb(null, send.success(JSON.parse(JSON.stringify(result.data))));
@@ -66,8 +82,10 @@ var civicFactory = {
         if(!query) return cb(send.fail500("Unknown error"), null);
         var array = [];
         if(!query.roles) return cb(null, array);
+        if(typeof query.roles === 'object') return cb(null, query.roles);
         var temp = query.roles.replace("[","");
         temp = temp.replace("]","");
+        temp = temp.replace(/ /g,"");
         array = temp.split(",");
         return cb(null, array);
     }

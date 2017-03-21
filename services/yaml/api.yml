@@ -221,27 +221,7 @@ paths:
         type: string
         in: query
         required: false
-        description: one of the roles
-      - name: roles
-        type: string
-        in: query
-        required: false
-        description: one of the roles
-      - name: roles
-        type: string
-        in: query
-        required: false
-        description: one of the roles
-      - name: roles
-        type: string
-        in: query
-        required: false
-        description: one of the roles
-      - name: roles
-        type: string
-        in: query
-        required: false
-        description: one of the roles
+        description: roles, comma delimited
       responses:
         200:
           description: GET successful

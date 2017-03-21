@@ -12,16 +12,22 @@ var civicApi = {
     getReps: function(req, res){
         if(!req.query.address) return respond.sendJson(res, send.fail417("Address is a required field"));
         var newRoles = "";
+        console.log(req.query.roles);
+        if(typeof req.query.roles === 'string') {
+            req.query.roles = req.query.roles.replace(/ /g,"");
+        }
         civic.returnRoleArrayAsync(req.query)
             .each(function(role){
                 newRoles = newRoles+"&roles="+role;
                 return newRoles;
             })
             .then(function(output){
-                return civic.findAddressAsync(req.query.address)
+                return civic.findAddressAsync(req.query.address, newRoles)
             })
             .then(function(output){
-                if(!output) return civic.getFromCivicAsync(req.query, newRoles);
+                if(!output) {
+                    return civic.getFromCivicAsync(req.query, newRoles);
+                }
                 return output;
             })
             .then(function(output){
