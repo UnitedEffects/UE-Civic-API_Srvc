@@ -1,6 +1,6 @@
 {
   "name": "ue-civic",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A microservice to proxy and stream data from teh googleapi civic public api.",
   "private": true,
   "scripts": {
