@@ -20,7 +20,7 @@ router.get('/', function(req, res, next) {
 });
 
 //Payment API
-router.get('/civic/representatives', authApi.isChainedSocialBearer, civicApi.getReps);
+router.get('/civic/representatives', civicApi.getReps);
 router.get('/img', civicApi.img);
 
 //logs
