@@ -5,11 +5,12 @@ A wrapper with caching for the googleapi civic service to allow you to respond q
 ## Todo
 <strike>
 * update configs
-* get logs with swagger running</strike>
+* get logs with swagger running
 * convert code base and update swagger
 * update role based access
 * update auth requirements for anon users
 * implement and test
-* deploy to QA
+* deploy to QA </strike>
 * merge v2
+* fix README
 * push to prod
