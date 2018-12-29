@@ -7,7 +7,8 @@ const config = {
     REPLICA: process.env.REPLICA || 'rs0',
     PRODUCT_SLUG: process.env.PRODUCT_SLUG || 'ueauth_product_slug',
     IMPLEMENTER: process.env.IMPLEMENTER || 'United Effects',
-    CIVIC: process.env.CIVIC || 'CIVICAPIKEY'
+    CIVIC: process.env.CIVIC || 'CIVICAPIKEY',
+    CIVIC_API: process.env.CIVIC_API || "https://www.googleapis.com/civicinfo/v2/representatives"
 };
 
 module.exports = config;

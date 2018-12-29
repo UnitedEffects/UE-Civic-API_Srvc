@@ -4,20 +4,17 @@ import config from '../../config';
 const ac = new Access();
 
 ac.grant(['guest'])
-    .createAny('payment')
-    .readAny('my')
-    .readOwn('payment');
+    .readAny('img')
+    .readAny('civic');
 
 ac.grant(['productAdmin', 'domainAdmin'])
-    .extend('guest')
-    .readAny('payment');
+    .extend('guest');
 
 ac.grant(['superAdmin'])
     .extend('guest')
     .createAny('logs')
     .updateAny('logs')
     .readAny('logs')
-    .deleteAny('logs')
-    .readAny('payment');
+    .deleteAny('logs');
 
 export default ac;

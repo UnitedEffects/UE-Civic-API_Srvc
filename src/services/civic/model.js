@@ -13,7 +13,7 @@ const civicSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    roles: String,
+    roles: Array,
     data: {
         type: Object,
         required: true

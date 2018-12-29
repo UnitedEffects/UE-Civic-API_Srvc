@@ -28,7 +28,7 @@ router.get('/version', function(req, res, next) {
 });
 
 router.get('/civic/representatives', [allowAnon, auth.isOptionalAuthenticated], civicApi.getReps);
-router.get('/img', civicApi.img);
+router.get('/img', [allowAnon, auth.isOptionalAuthenticated], civicApi.img);
 
 // Log and Health
 router.get('/logs', [auth.isBearerAuthenticated, rbac.middleAny], log.getLogs);
