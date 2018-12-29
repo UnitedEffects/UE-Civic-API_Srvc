@@ -6,7 +6,7 @@ require('babel-polyfill');
 
 const mongoose = require('mongoose');
 const app = require('../app').default;
-const debug = require('debug')('ue-postcard-mailer:app');
+const debug = require('debug')('ue-civic:app');
 const http = require('http');
 const config = require('../config');
 
@@ -70,7 +70,7 @@ const normalizePort = (val) => {
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || '3003');
+const port = normalizePort(process.env.PORT || '4050');
 app.set('port', port);
 
 /**

@@ -12,7 +12,7 @@ import response from './services/response';
 import index from './routes/index';
 import api from './routes/api_v2';
 const app = express();
-const debug = Debug('ue-pc-payment:app');
+const debug = Debug('ue-civic:app');
 app.set('views', path.join(__dirname, '../views'));
 
 // view engine setup

@@ -14,10 +14,6 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/stripe', function(req, res, next){
-    res.render('testpayment', {title: 'Testing Stripe'});
-});
-
 router.get('/swagger.json', (req, res) =>  {
     try{
         const swag = yaml.load('./swagger.yaml');

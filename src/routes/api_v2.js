@@ -2,8 +2,7 @@ import express from 'express';
 import log from '../services/log/api';
 import auth from '../services/auth/api';
 import rbac from '../services/auth/roleApi';
-import stripeApi from '../services/stripe/api';
-import payApi from '../services/receipt/api';
+import civicApi from '../services/civic/api';
 const config = require('../config');
 const pJson = require('../../package.json');
 const router = express.Router();
@@ -17,26 +16,19 @@ router.get('/version', function(req, res, next) {
     res.json( {
         err: null,
         message: {
-            service: 'MailMyVoice.com Payment Service',
+            service: 'MailMyVoice.com Civic Proxy Service',
             implementer: config.IMPLEMENTER,
-            git: 'https://github.com/UnitedEffects/UE-PC-Payment_Srvc',
+            git: 'https://github.com/UnitedEffects/UE-Civic-API_Srvc',
             version: pJson.version,
             currentMaintainers: pJson.contributors,
             baseURL: '/api',
-            copyright: 'Copyright (c) 2018-19 theBoEffect LLC DBA United Effects'
+            copyright: 'Copyright (c) 2019 theBoEffect LLC DBA United Effects'
         }
     });
 });
 
-//testing
-router.post('/payment/test', (req, res) => {res.json(req.body);});
-router.post('/payment', [allowAnon, auth.isOptionalAuthenticated], stripeApi.charge);
-router.get('/payment', [auth.isBearerAuthenticated, rbac.middleAny], payApi.returnAll);
-router.get('/payment/:guid', [allowAnon, auth.isOptionalAuthenticated], payApi.returnOne);
-router.get('/my/payment', [auth.isBearerAuthenticated, rbac.middleAny], payApi.returnMine);
-
-//event
-router.post('/payment/process', auth.isWebHookAuthorized, payApi.processAll);
+router.get('/civic/representatives', [allowAnon, auth.isOptionalAuthenticated], civicApi.getReps);
+router.get('/img', civicApi.img);
 
 // Log and Health
 router.get('/logs', [auth.isBearerAuthenticated, rbac.middleAny], log.getLogs);

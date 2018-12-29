@@ -10,7 +10,7 @@ var civicSchema = new mongoose.Schema({
     created: {
         type: Date,
         default: Date.now(),
-        expires: '100d'
+        expires: '7d'
     },
     address: {
         type: String,

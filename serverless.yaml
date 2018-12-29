@@ -15,10 +15,7 @@ provider:
     DOMAIN: ${file(./.env/env.${self:provider.env}.json):DOMAIN}
     PRODUCT_SLUG: ${file(./.env/env.${self:provider.env}.json):PRODUCT_SLUG}
     IMPLEMENTER: ${file(./.env/env.${self:provider.env}.json):IMPLEMENTER}
-    WEBHOOK: ${file(./.env/env.${self:provider.env}.json):WEBHOOK}
-    MAILER: ${file(./.env/env.${self:provider.env}.json):MAILER}
-    STANDARD: ${file(./.env/env.${self:provider.env}.json):STANDARD}
-    STRIPE: ${file(./.env/env.${self:provider.env}.json):STRIPE}
+    CIVIC: ${file(./.env/env.${self:provider.env}.json):CIVIC}
 
 package:
   exclude:
