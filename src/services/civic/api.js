@@ -2,7 +2,6 @@ import axios from 'axios';
 import responder from '../responder';
 import send from '../response';
 import dal from './civic';
-import log from "../log/logs";
 
 function returnRoleArray (query) {
     if(!query) return [];
