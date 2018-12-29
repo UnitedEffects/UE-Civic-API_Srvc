@@ -1,0 +1,472 @@
+openapi: 3.0.0
+info:
+  description: >-
+    This is the MailMyVoice postcard payment service which utilizes <a href="stripe.com">stripe.com</a> for multiple payment method processing. This is a serverside token processing service, so all Stripe payment methods which utilzes tokens should be supported. Consult <a href="https://stripe.com/docs">here</a> for information on what kinds of payments can be processed.
+  version: 2.0.0
+  title: MailMyVoice.com Payment Service by United Effects
+  contact:
+    email: borzou@theboeffect.com
+tags:
+  - name: logs
+    description: Logging endpoints
+  - name: charge
+    description: Charging a payment
+  - name: receipts
+    description: Reviewing payment and receipt records
+  - name: event
+    description: Triggered using an auth code
+paths:
+  /logs:
+    post:
+      tags:
+        - logs
+      summary: Write a new log to the console and the db
+      description: This is unlikely to be used with frequency.
+      operationId: writeLog
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseLog'
+        '405':
+          description: Invalid input
+        '500':
+          description: Unknown error
+      security:
+        - UEAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Log'
+        description: Log data to be written
+        required: true
+    get:
+      tags:
+        - logs
+      summary: Retrieve all logs in the system
+      description: ''
+      operationId: getLogs
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logs'
+      security:
+        - UEAuth: []
+  '/logs/{code}':
+    get:
+      tags:
+        - logs
+      summary: Find all logs with one type of code.
+      description: 'Codes should be "error", "notify", or "success"'
+      operationId: getLogByCode
+      parameters:
+        - name: code
+          in: path
+          description: code of log types to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logs'
+        '400':
+          description: Invalid code supplied
+      security:
+        - UEAuth: []
+  '/logs/{code}/{timestamp}':
+    get:
+      tags:
+        - logs
+      summary: Find a log with code and timestamp specified
+      description: 'Codes should be "error", "notify", or "success".'
+      operationId: getLog
+      parameters:
+        - name: code
+          in: path
+          description: code of log type to return
+          required: true
+          schema:
+            type: string
+        - name: timestamp
+          in: path
+          description: timestamp of log type to return
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseLog'
+        '400':
+          description: Invalid code supplied
+        '404':
+          description: Log not found
+      security:
+        - UEAuth: []
+  /health:
+    get:
+      tags:
+        - health
+      summary: Health check
+      description: Health check
+      responses:
+        '200':
+          description: GET successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/success'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/defaultError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/defaultError'
+  /payment/process:
+    post:
+      tags:
+        - event
+      summary: Trigger postcards via mailer service for any payment not processed.
+      description: Trigger postcards via mailer service for any payment not processed.
+      parameters:
+        - name: code
+          in: query
+          description: webhook code to trigger event
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid input
+        '500':
+          description: Unknown error
+  /payment:
+    get:
+      tags:
+        - receipts
+      summary: Get All payments and receipts.
+      description: Get All payments and receipts.
+      parameters:
+        - name: userId
+          in: query
+          description: filter on User ID
+          schema:
+            type: string
+        - name: email
+          in: query
+          description: filter on Email
+          schema:
+            type: string
+        - name: state
+          in: query
+          description: 'filter on state - new or processed'
+          schema:
+            type: string
+        - name: extReceiptId
+          in: query
+          description: all postcards associated to a single receipt ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: GET successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/paymentResopnseObject'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/defaultError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/defaultError'
+      security:
+        - UEAuth: []
+    post:
+      tags:
+        - charge
+      summary: Charging using a token via Stripe API
+      description: Charging using a token via Stripe API. This endpoint lets you process any token from stripe which inherently means any payment type which uses a token. For a list of payment types supported see <a href="https://stripe.com/docs">here</a>.
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/paymentObject'
+        '405':
+          description: Invalid input
+        '500':
+          description: Unknown error
+      security:
+        - UEAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/chargeObject'
+        description: Log data to be written
+        required: true
+  /my/payment:
+    get:
+      tags:
+        - receipts
+      summary: Get All your payments and receipts.
+      description: Get All your payments and receipts.
+      parameters:
+        - name: email
+          in: query
+          description: filter on Email
+          schema:
+            type: string
+        - name: state
+          in: query
+          description: 'filter on state - new or processed'
+          schema:
+            type: string
+        - name: extReceiptId
+          in: query
+          description: all postcards associated to a single receipt ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: GET successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/paymentResopnseObject'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/defaultError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/defaultError'
+      security:
+        - UEAuth: []
+  /payment/{guid}:
+    get:
+      tags:
+        - receipts
+      summary: Get one payment and receipt.
+      description: Get one payment and receipt.
+      parameters:
+        - name: guid
+          in: path
+          description: GUID of payment to find
+          schema:
+            type: string
+        - name: pcSessionId
+          in: query
+          description: used to retrieve a payment by guid if you are not logged in
+          schema:
+            type: string
+      responses:
+        '200':
+          description: GET successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/singlePaymentResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/defaultError'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/defaultError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/defaultError'
+      security:
+        - UEAuth: []
+servers:
+  - url: 'http://localhost:3003/api'
+  - url: 'https://localhost:3003/api'
+components:
+  securitySchemes:
+    UEAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+      description: >-
+        For both UEAuth and other Bearer based tokens, type in "Bearer "
+        followed by your Token.
+  schemas:
+    Log:
+      type: object
+      required:
+        - logCode
+        - logTimestamp
+      properties:
+        logCode:
+          type: string
+          description: 'This is your hashKey. This should only be ERROR, NOTIFY, or SUCCESS'
+        logTimestamp:
+          type: string
+          format: date-time
+          description: This is your rangeKey. This is a timestamp.
+        message:
+          type: string
+          description: This should be any brief summary data in string format.
+        details:
+          type: object
+          description: You can directly pipe any error message objects to here.
+    ApiResponseLog:
+      properties:
+        type:
+          type: string
+          default: Log
+        data:
+          $ref: '#/components/schemas/Log'
+    Logs:
+      properties:
+        type:
+          type: string
+          default: Log
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Log'
+    success:
+      required:
+        - data
+      properties:
+        data:
+          type: object
+    defaultError:
+      required:
+        - code
+        - data
+      properties:
+        code:
+          type: integer
+          format: int32
+        data:
+          type: string
+    chargeObject:
+      required:
+        - amount
+        - postcards
+        - stripeToken
+        - stripeTokenType
+        - email
+      properties:
+        amount:
+          type: integer
+          format: int32
+          description: Amount in cents to charge. This should match the calculated value.
+        pcSessionId:
+          type: string
+          description: Required if the user isn't logged in
+        userId:
+          type: string
+          description: If this is anon user and you are tracking IDs externally, set it here.
+        postcards:
+          type: array
+          items:
+            type: string
+        discountCode:
+          type: string
+          description: pending funcitonality. ignore for now
+        stripeToken:
+          type: string
+          description: From Stripe API
+        stripeTokenType:
+          type: string
+          enum: ['card']
+        stripeEmail:
+          description: Email address of person making payment (internally this is simplified to "email")
+          type: string
+    paymentResopnseObject:
+      properties:
+        type:
+          type: string
+          enum: ['Payment']
+        data:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/paymentObject'
+    singlePaymentResponse:
+      properties:
+        type:
+          type: string
+          enum: ['Payment']
+        data:
+          type: object
+          $ref: '#/components/schemas/paymentObject'
+    paymentObject:
+      properties:
+        created:
+          type: string
+          format: date-time
+        guid:
+          type: string
+          description: unique GUID for the payment object. different from receiptId
+        userId:
+          type: string
+          description: ID of the user making payment
+        email:
+          type: string
+          description: Email address of the person making payment
+        pcSessionId:
+          type: string
+          description: Unique session ID provided by an anon user
+        postcards:
+          type: array
+          items:
+            type: string
+            description: GUIDs of postcards associated to this transaction
+        state:
+          type: string
+          default: 'new'
+          enum: ['new', 'processed']
+          description: To help track when postcards are actually triggered or not from the payment
+        extReceiptId:
+          type: string
+          description: The ID associated to the receipt denormalized to the root.
+        receipt:
+          type: object
+          description: The receipt from a sale through a charge provider. Currently only stripe is supported
