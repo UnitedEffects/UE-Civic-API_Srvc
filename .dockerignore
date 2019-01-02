@@ -1,1 +1,6 @@
-config.js
+src/config.js
+dist/
+node_modules/
+.env/
+.env_changeme/
+.serverless/

@@ -1,20 +1,13 @@
-# Project Freedom
-# UE CIVIC API IMAGE
-# Copyright 2017
-
 FROM mhart/alpine-node
-LABEL author="borzou@theboeffect.com"
-RUN apk update
-RUN apk add git
-RUN mkdir /src
+LABEL owner="bmotlagh@unitedeffects.com"
 
-COPY . /src
-WORKDIR /src
-RUN mv /src/config_changeme.js /src/config.js
-RUN npm install bower -g
-RUN npm install
-RUN bower install --allow-root
+RUN mkdir /app
+COPY . /app
+WORKDIR /app
 
-EXPOSE 3003
+RUN mv /app/src/config_changeme.js /app/src/config.js
+RUN yarn --production
 
-CMD ["node", "./bin/www"]
+EXPOSE 4050
+
+CMD ["yarn", "start"]
