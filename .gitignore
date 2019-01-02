@@ -37,7 +37,10 @@ jspm_packages
 .node_repl_history
 
 # custom
+testing/
 .idea/
 config.js
+src/config.js
 testing/
-public/bower_components/
+.env/
+dist/

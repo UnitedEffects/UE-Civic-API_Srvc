@@ -1,0 +1,1073 @@
+openapi: 3.0.0
+info:
+  description: >-
+    This is the MailMyVoice civic service which proxies the google civic API. The service caches the api to avoid too many requests to google.
+  version: 2.0.0
+  title: MailMyVoice.com Civic Service by United Effects
+  contact:
+    email: borzou@theboeffect.com
+tags:
+  - name: logs
+    description: Logging endpoints
+  - name: civic
+    description: Civic Proxy
+paths:
+  /logs:
+    post:
+      tags:
+        - logs
+      summary: Write a new log to the console and the db
+      description: This is unlikely to be used with frequency.
+      operationId: writeLog
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseLog'
+        '405':
+          description: Invalid input
+        '500':
+          description: Unknown error
+      security:
+        - UEAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Log'
+        description: Log data to be written
+        required: true
+    get:
+      tags:
+        - logs
+      summary: Retrieve all logs in the system
+      description: ''
+      operationId: getLogs
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logs'
+      security:
+        - UEAuth: []
+  '/logs/{code}':
+    get:
+      tags:
+        - logs
+      summary: Find all logs with one type of code.
+      description: 'Codes should be "error", "notify", or "success"'
+      operationId: getLogByCode
+      parameters:
+        - name: code
+          in: path
+          description: code of log types to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logs'
+        '400':
+          description: Invalid code supplied
+      security:
+        - UEAuth: []
+  '/logs/{code}/{timestamp}':
+    get:
+      tags:
+        - logs
+      summary: Find a log with code and timestamp specified
+      description: 'Codes should be "error", "notify", or "success".'
+      operationId: getLog
+      parameters:
+        - name: code
+          in: path
+          description: code of log type to return
+          required: true
+          schema:
+            type: string
+        - name: timestamp
+          in: path
+          description: timestamp of log type to return
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseLog'
+        '400':
+          description: Invalid code supplied
+        '404':
+          description: Log not found
+      security:
+        - UEAuth: []
+  /health:
+    get:
+      tags:
+        - health
+      summary: Health check
+      description: Health check
+      responses:
+        '200':
+          description: GET successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/success'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/defaultError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/defaultError'
+  /civic/representatives:
+    get:
+      tags:
+        - civic
+      summary: >-
+        A proxy for the googleapi civic service representative endpoint. Send it
+        everything you would send that.
+      description: >-
+        A proxy for the googleapi civic service representative endpoint. Send it
+        everything you would send that.
+      parameters:
+        - name: address
+          in: query
+          required: true
+          description: street+city+state+zip
+          schema:
+            type: string
+        - name: roles
+          in: query
+          required: false
+          description: 'roles, comma delimited'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: GET successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/civicApiResponseModified'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/defaultError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/defaultError'
+      security:
+        - UEAuth: []
+  /img:
+    get:
+      tags:
+        - civic
+      summary: Image proxy
+      description: Image proxy
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: url of the image to proxzy
+          schema:
+            type: string
+      responses:
+        '200':
+          description: GET successful
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/defaultError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/defaultError'
+      security:
+        - UEAuth: []
+servers:
+  - url: 'http://localhost:4050/api'
+  - url: 'https://localhost:4050/api'
+components:
+  securitySchemes:
+    UEAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+      description: >-
+        For both UEAuth and other Bearer based tokens, type in "Bearer "
+        followed by your Token.
+  schemas:
+    Log:
+      type: object
+      required:
+        - logCode
+        - logTimestamp
+      properties:
+        logCode:
+          type: string
+          description: 'This is your hashKey. This should only be ERROR, NOTIFY, or SUCCESS'
+        logTimestamp:
+          type: string
+          format: date-time
+          description: This is your rangeKey. This is a timestamp.
+        message:
+          type: string
+          description: This should be any brief summary data in string format.
+        details:
+          type: object
+          description: You can directly pipe any error message objects to here.
+    ApiResponseLog:
+      properties:
+        type:
+          type: string
+          default: Log
+        data:
+          $ref: '#/components/schemas/Log'
+    Logs:
+      properties:
+        type:
+          type: string
+          default: Log
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Log'
+    success:
+      required:
+        - data
+      properties:
+        data:
+          type: object
+    defaultError:
+      required:
+        - code
+        - data
+      properties:
+        code:
+          type: integer
+          format: int32
+        data:
+          type: string
+    civicApiResponseModified:
+      type: object
+      properties:
+        type:
+          type: string
+        data:
+          type: object
+          properties:
+            kind:
+              type: string
+            normalizedInput:
+              type: object
+              properties:
+                line1:
+                  type: string
+                city:
+                  type: string
+                state:
+                  type: string
+                zip:
+                  type: string
+              required:
+                - line1
+                - city
+                - state
+                - zip
+            divisions:
+              type: object
+              properties:
+                'ocd-division/country:us':
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    officeIndices:
+                      type: array
+                      items:
+                        - type: integer
+                        - type: integer
+                  required:
+                    - name
+                    - officeIndices
+                'ocd-division/country:us/state:pa':
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    officeIndices:
+                      type: array
+                      items:
+                        - type: integer
+                        - type: integer
+                        - type: integer
+                  required:
+                    - name
+                    - officeIndices
+                'ocd-division/country:us/state:pa/cd:1':
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    officeIndices:
+                      type: array
+                      items:
+                        - type: integer
+                  required:
+                    - name
+                    - officeIndices
+              required:
+                - 'ocd-division/country:us'
+                - 'ocd-division/country:us/state:pa'
+                - 'ocd-division/country:us/state:pa/cd:1'
+            offices:
+              type: array
+              items:
+                - type: object
+                  properties:
+                    name:
+                      type: string
+                    divisionId:
+                      type: string
+                    levels:
+                      type: array
+                      items:
+                        - type: string
+                    roles:
+                      type: array
+                      items:
+                        - type: string
+                        - type: string
+                    officialIndices:
+                      type: array
+                      items:
+                        - type: integer
+                  required:
+                    - name
+                    - divisionId
+                    - levels
+                    - roles
+                    - officialIndices
+                - type: object
+                  properties:
+                    name:
+                      type: string
+                    divisionId:
+                      type: string
+                    levels:
+                      type: array
+                      items:
+                        - type: string
+                    roles:
+                      type: array
+                      items:
+                        - type: string
+                    officialIndices:
+                      type: array
+                      items:
+                        - type: integer
+                  required:
+                    - name
+                    - divisionId
+                    - levels
+                    - roles
+                    - officialIndices
+                - type: object
+                  properties:
+                    name:
+                      type: string
+                    divisionId:
+                      type: string
+                    levels:
+                      type: array
+                      items:
+                        - type: string
+                    roles:
+                      type: array
+                      items:
+                        - type: string
+                    officialIndices:
+                      type: array
+                      items:
+                        - type: integer
+                        - type: integer
+                  required:
+                    - name
+                    - divisionId
+                    - levels
+                    - roles
+                    - officialIndices
+                - type: object
+                  properties:
+                    name:
+                      type: string
+                    divisionId:
+                      type: string
+                    levels:
+                      type: array
+                      items:
+                        - type: string
+                    roles:
+                      type: array
+                      items:
+                        - type: string
+                    officialIndices:
+                      type: array
+                      items:
+                        - type: integer
+                  required:
+                    - name
+                    - divisionId
+                    - levels
+                    - roles
+                    - officialIndices
+                - type: object
+                  properties:
+                    name:
+                      type: string
+                    divisionId:
+                      type: string
+                    levels:
+                      type: array
+                      items:
+                        - type: string
+                    roles:
+                      type: array
+                      items:
+                        - type: string
+                    officialIndices:
+                      type: array
+                      items:
+                        - type: integer
+                  required:
+                    - name
+                    - divisionId
+                    - levels
+                    - roles
+                    - officialIndices
+                - type: object
+                  properties:
+                    name:
+                      type: string
+                    divisionId:
+                      type: string
+                    levels:
+                      type: array
+                      items:
+                        - type: string
+                    roles:
+                      type: array
+                      items:
+                        - type: string
+                    officialIndices:
+                      type: array
+                      items:
+                        - type: integer
+                  required:
+                    - name
+                    - divisionId
+                    - levels
+                    - roles
+                    - officialIndices
+            officials:
+              type: array
+              items:
+                - type: object
+                  properties:
+                    name:
+                      type: string
+                    address:
+                      type: array
+                      items:
+                        - type: object
+                          properties:
+                            line1:
+                              type: string
+                            line2:
+                              type: string
+                            city:
+                              type: string
+                            state:
+                              type: string
+                            zip:
+                              type: string
+                          required:
+                            - line1
+                            - line2
+                            - city
+                            - state
+                            - zip
+                    party:
+                      type: string
+                    phones:
+                      type: array
+                      items:
+                        - type: string
+                    urls:
+                      type: array
+                      items:
+                        - type: string
+                    photoUrl:
+                      type: string
+                    channels:
+                      type: array
+                      items:
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                    office:
+                      type: string
+                    division:
+                      type: string
+                  required:
+                    - name
+                    - address
+                    - party
+                    - phones
+                    - urls
+                    - photoUrl
+                    - channels
+                    - office
+                    - division
+                - type: object
+                  properties:
+                    name:
+                      type: string
+                    address:
+                      type: array
+                      items:
+                        - type: object
+                          properties:
+                            line1:
+                              type: string
+                            line2:
+                              type: string
+                            city:
+                              type: string
+                            state:
+                              type: string
+                            zip:
+                              type: string
+                          required:
+                            - line1
+                            - line2
+                            - city
+                            - state
+                            - zip
+                    party:
+                      type: string
+                    phones:
+                      type: array
+                      items:
+                        - type: string
+                    urls:
+                      type: array
+                      items:
+                        - type: string
+                    photoUrl:
+                      type: string
+                    channels:
+                      type: array
+                      items:
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                    office:
+                      type: string
+                    division:
+                      type: string
+                  required:
+                    - name
+                    - address
+                    - party
+                    - phones
+                    - urls
+                    - photoUrl
+                    - channels
+                    - office
+                    - division
+                - type: object
+                  properties:
+                    name:
+                      type: string
+                    address:
+                      type: array
+                      items:
+                        - type: object
+                          properties:
+                            line1:
+                              type: string
+                            city:
+                              type: string
+                            state:
+                              type: string
+                            zip:
+                              type: string
+                          required:
+                            - line1
+                            - city
+                            - state
+                            - zip
+                    party:
+                      type: string
+                    phones:
+                      type: array
+                      items:
+                        - type: string
+                    urls:
+                      type: array
+                      items:
+                        - type: string
+                    photoUrl:
+                      type: string
+                    channels:
+                      type: array
+                      items:
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                    office:
+                      type: string
+                    division:
+                      type: string
+                  required:
+                    - name
+                    - address
+                    - party
+                    - phones
+                    - urls
+                    - photoUrl
+                    - channels
+                    - office
+                    - division
+                - type: object
+                  properties:
+                    name:
+                      type: string
+                    address:
+                      type: array
+                      items:
+                        - type: object
+                          properties:
+                            line1:
+                              type: string
+                            city:
+                              type: string
+                            state:
+                              type: string
+                            zip:
+                              type: string
+                          required:
+                            - line1
+                            - city
+                            - state
+                            - zip
+                    party:
+                      type: string
+                    phones:
+                      type: array
+                      items:
+                        - type: string
+                    urls:
+                      type: array
+                      items:
+                        - type: string
+                    photoUrl:
+                      type: string
+                    channels:
+                      type: array
+                      items:
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                    office:
+                      type: string
+                    division:
+                      type: string
+                  required:
+                    - name
+                    - address
+                    - party
+                    - phones
+                    - urls
+                    - photoUrl
+                    - channels
+                    - office
+                    - division
+                - type: object
+                  properties:
+                    name:
+                      type: string
+                    address:
+                      type: array
+                      items:
+                        - type: object
+                          properties:
+                            line1:
+                              type: string
+                            city:
+                              type: string
+                            state:
+                              type: string
+                            zip:
+                              type: string
+                          required:
+                            - line1
+                            - city
+                            - state
+                            - zip
+                    party:
+                      type: string
+                    phones:
+                      type: array
+                      items:
+                        - type: string
+                    urls:
+                      type: array
+                      items:
+                        - type: string
+                    photoUrl:
+                      type: string
+                    channels:
+                      type: array
+                      items:
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                    office:
+                      type: string
+                    division:
+                      type: string
+                  required:
+                    - name
+                    - address
+                    - party
+                    - phones
+                    - urls
+                    - photoUrl
+                    - channels
+                    - office
+                    - division
+                - type: object
+                  properties:
+                    name:
+                      type: string
+                    address:
+                      type: array
+                      items:
+                        - type: object
+                          properties:
+                            line1:
+                              type: string
+                            city:
+                              type: string
+                            state:
+                              type: string
+                            zip:
+                              type: string
+                          required:
+                            - line1
+                            - city
+                            - state
+                            - zip
+                    party:
+                      type: string
+                    phones:
+                      type: array
+                      items:
+                        - type: string
+                    urls:
+                      type: array
+                      items:
+                        - type: string
+                    photoUrl:
+                      type: string
+                    emails:
+                      type: array
+                      items:
+                        - type: string
+                    channels:
+                      type: array
+                      items:
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                    office:
+                      type: string
+                    division:
+                      type: string
+                  required:
+                    - name
+                    - address
+                    - party
+                    - phones
+                    - urls
+                    - photoUrl
+                    - emails
+                    - channels
+                    - office
+                    - division
+                - type: object
+                  properties:
+                    name:
+                      type: string
+                    address:
+                      type: array
+                      items:
+                        - type: object
+                          properties:
+                            line1:
+                              type: string
+                            city:
+                              type: string
+                            state:
+                              type: string
+                            zip:
+                              type: string
+                          required:
+                            - line1
+                            - city
+                            - state
+                            - zip
+                    party:
+                      type: string
+                    phones:
+                      type: array
+                      items:
+                        - type: string
+                    urls:
+                      type: array
+                      items:
+                        - type: string
+                    photoUrl:
+                      type: string
+                    emails:
+                      type: array
+                      items:
+                        - type: string
+                    channels:
+                      type: array
+                      items:
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                        - type: object
+                          properties:
+                            type:
+                              type: string
+                            id:
+                              type: string
+                          required:
+                            - type
+                            - id
+                    office:
+                      type: string
+                    division:
+                      type: string
+                  required:
+                    - name
+                    - address
+                    - party
+                    - phones
+                    - urls
+                    - photoUrl
+                    - emails
+                    - channels
+                    - office
+                    - division
+          required:
+            - kind
+            - normalizedInput
+            - divisions
+            - offices
+            - officials
+      required:
+        - type
+        - data
