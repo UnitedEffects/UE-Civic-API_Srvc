@@ -18,7 +18,6 @@ export default {
             const reps = await dal.getReps(req.query, roleArray);
             return responder.send(res, reps);
         } catch (error) {
-            console.info(error.response.data);
             return responder.send(res, (error.code) ? error : send.error(error.message, 'Representatives'))
         }
 

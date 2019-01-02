@@ -9,6 +9,9 @@ const civicSchema = new mongoose.Schema({
         default: moment().format(),
         expires: '7d'
     },
+    /**
+     * Address could be any string; however, I use string-hash to encode it to avoid storing actual addresses.
+     */
     address: {
         type: String,
         required: true
@@ -20,7 +23,6 @@ const civicSchema = new mongoose.Schema({
     }
 });
 
-civicSchema.pre('save', callback => //console.log('log saved');
-    callback());
+civicSchema.pre('save', callback => callback());
 
 export default mongoose.model('Civic', civicSchema);
