@@ -16,6 +16,7 @@ provider:
     PRODUCT_SLUG: ${file(./.env/env.${self:provider.env}.json):PRODUCT_SLUG}
     IMPLEMENTER: ${file(./.env/env.${self:provider.env}.json):IMPLEMENTER}
     CIVIC: ${file(./.env/env.${self:provider.env}.json):CIVIC}
+    CIVIC_API: ${file(./.env/env.${self:provider.env}.json):CIVIC_API}
 
 package:
   exclude:
