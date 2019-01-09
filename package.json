@@ -1,6 +1,6 @@
 {
   "name": "ue-civic",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A microservice to proxy and stream data from teh googleapi civic public api.",
   "private": false,
   "scripts": {
@@ -56,8 +56,7 @@
     "serverless-apigw-binary": "^0.4.4",
     "serverless-domain-manager": "^2.6.6",
     "serverless-http": "^1.8.0",
-    "string-hash": "^1.1.3",
-    "uuid": "^3.3.2",
+    "uuidv4": "^2.0.0",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {

@@ -1,9 +1,8 @@
 import axios from 'axios';
-import hash from 'string-hash';
+import uuid from 'uuidv4';
 import send from '../response';
 import helper from '../helper';
 import Civic from './model';
-import log from "../log/logs";
 
 const config = require('../../config');
 
@@ -17,7 +16,7 @@ async function queryRoles (array) {
 
 export default {
     async getReps(query, roles) {
-        const address = hash(query.address);
+        const address = uuid.fromString(query.address);
         const lookUp = await Civic.findOne({ address, roles });
         if(lookUp) return send.set200(lookUp.data, 'Representatives');
         const qRoles = await queryRoles(roles);
