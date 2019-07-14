@@ -74,6 +74,9 @@
     "sinon": "^5.0.10",
     "sinon-mongoose": "^2.1.1"
   },
+  "resolutions": {
+    "sinon/*/lodash": "^4.17.13"
+  },
   "engines": {
     "yarn": ">= 1.0.0"
   }
