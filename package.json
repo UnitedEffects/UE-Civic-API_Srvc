@@ -75,7 +75,9 @@
     "sinon-mongoose": "^2.1.1"
   },
   "resolutions": {
-    "sinon/*/lodash": "^4.17.13"
+    "sinon/*/lodash": "^4.17.13",
+    "mocha/*/growl": "^1.10.0",
+    "chai-http/*/superagent": "^3.7.0"
   },
   "engines": {
     "yarn": ">= 1.0.0"
