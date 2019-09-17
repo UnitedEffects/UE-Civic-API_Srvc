@@ -5,7 +5,7 @@ const config = {
     PROTOCOL: process.env.PROTOCOL || 'http',
     UEAUTH: process.env.DOMAIN || 'https://domainqa.unitedeffects.com',
     REPLICA: process.env.REPLICA || 'rs0',
-    PRODUCT_SLUG: process.env.PRODUCT_SLUG || 'ueauth_product_slug',
+    PRODUCT_SLUG: process.env.PRODUCT_SLUG || 'mail_my_voice',
     IMPLEMENTER: process.env.IMPLEMENTER || 'United Effects',
     CIVIC: process.env.CIVIC || 'CIVICAPIKEY',
     CIVIC_API: process.env.CIVIC_API || "https://www.googleapis.com/civicinfo/v2/representatives"
