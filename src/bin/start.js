@@ -4,7 +4,7 @@
 require('babel-core/register');
 require('babel-polyfill');
 
-const mongoose = require('mongoose');
+const connection = require('../connection').default;
 const app = require('../app').default;
 const debug = require('debug')('ue-civic:app');
 const http = require('http');
@@ -18,33 +18,7 @@ if (!mongoConnect) {
 }
 
 console.info(`Connection string: ${mongoConnect}`);
-
-const mongoOptions = {
-    keepAlive: 300000,
-    connectTimeoutMS: 10000,
-    useNewUrlParser: true,
-    promiseLibrary: Promise
-};
-
-if (config.ENV === 'production') mongoOptions.replicaSet = config.REPLICA;
-
-function connectionM() {
-    mongoose.connect(`${mongoConnect}?authSource=admin`, mongoOptions)
-        .then(() => console.info('mongo connected'))
-        .catch((err) => {
-            console.info('********************************************ERROR*******************************************');
-            console.info('Unable to connect to the database - this service will not persist data');
-            console.info(`DB attempted:  ${mongoConnect}`);
-            console.info('Please check that the database is running and try again.');
-            console.info('DETAILED ERROR BELOW');
-            console.info(err);
-            console.info('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ERROR^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
-            setTimeout(() => {
-                connectionM();
-            }, 2000);
-        });
-}
-connectionM();
+connection.create(mongoConnect, config.REPLICA);
 
 /**
  * Normalize a port into a number, string, or false.
