@@ -13,6 +13,7 @@ function allowAnon (req, res, next) {
 }
 
 router.get('/version', function(req, res, next) {
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
     res.json( {
         err: null,
         message: {
@@ -36,6 +37,7 @@ router.get('/logs/:code', [auth.isBearerAuthenticated, rbac.middleAny], log.getL
 router.get('/logs/:code/:timestamp', [auth.isBearerAuthenticated, rbac.middleAny], log.getLog);
 router.post('/logs', [auth.isBearerAuthenticated, rbac.middleAny], log.writeLog);
 router.get('/health', function(req, res){
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
     res.json({data: {server: 'running'}});
 });
 
