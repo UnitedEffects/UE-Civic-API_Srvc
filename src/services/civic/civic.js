@@ -19,7 +19,7 @@ export default {
         const address = uuid.fromString(query.address);
         console.info(address);
         const lookUp = await Civic.findOne({ address, roles });
-        //if(lookUp) return send.set200(lookUp.data, 'Representatives');
+        if(lookUp) return send.set200(lookUp.data, 'Representatives');
         console.info('calling integrated API');
         const qRoles = await queryRoles(roles);
         let civicLookUp;
