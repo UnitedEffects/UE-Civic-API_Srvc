@@ -54,14 +54,9 @@ app.use((err, req, res, next) => {
 });
 
 // Handle uncaughtException
-let uncaught = 0;
-
 process.on('uncaughtException', (err) => {
     debug('Caught exception: %j', err);
-    uncaught += 1;
-    if (uncaught < 20) {
-        console.error({error: "UNCAUGHT EXCEPTION - Uncaught #: "+uncaught+". Notifications will stop after 20 exceptions. Restart this container after that.", stack: err.stack || err.message});
-    } else process.exit(1);
+    console.error({error: "UNCAUGHT EXCEPTION", stack: err.stack || err.message});
 });
 
 export default app;

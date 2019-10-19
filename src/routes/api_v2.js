@@ -3,6 +3,7 @@ import log from '../services/log/api';
 import auth from '../services/auth/api';
 import rbac from '../services/auth/roleApi';
 import civicApi from '../services/civic/api';
+import timeout from "connect-timeout";
 const config = require('../config');
 const pJson = require('../../package.json');
 const router = express.Router();
@@ -28,7 +29,7 @@ router.get('/version', function(req, res, next) {
     });
 });
 
-router.get('/civic/representatives', [allowAnon, auth.isOptionalAuthenticated], civicApi.getReps);
+router.get('/civic/representatives', [timeout(25000), allowAnon, auth.isOptionalAuthenticated, haltOnTimedout], civicApi.getReps);
 router.get('/img', [allowAnon, auth.isOptionalAuthenticated], civicApi.img);
 
 // Log and Health
@@ -40,5 +41,9 @@ router.get('/health', function(req, res){
     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
     res.json({data: {server: 'running'}});
 });
+
+function haltOnTimedout(req, res, next){
+    if (!req.timedout) next();
+}
 
 export default router;
