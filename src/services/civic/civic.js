@@ -17,7 +17,7 @@ async function queryRoles (array) {
 export default {
     async getReps(query, roles) {
         const address = uuid.fromString(query.address);
-        console.info(address);
+        console.info(`address as guid: ${address}`);
         const lookUp = await Civic.findOne({ address, roles });
         if(lookUp) return send.set200(lookUp.data, 'Representatives');
         console.info('calling integrated API');
@@ -31,7 +31,7 @@ export default {
                         name: 'Accept',
                         value: 'application/json'
                     },
-                    timeout: 8000
+                    timeout: 3000
                 }
             );
         } catch (error) {
@@ -46,7 +46,7 @@ export default {
                                 name: 'Accept',
                                 value: 'application/json'
                             },
-                            timeout: 10000
+                            timeout: 3000
                         }
                     );
                 } catch (error) {

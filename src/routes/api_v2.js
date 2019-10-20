@@ -29,7 +29,7 @@ router.get('/version', function(req, res, next) {
     });
 });
 
-router.get('/civic/representatives', [timeout(25000), allowAnon, auth.isOptionalAuthenticated, haltOnTimedout], civicApi.getReps);
+router.get('/civic/representatives', [timeout(10000), allowAnon, auth.isOptionalAuthenticated, haltOnTimedout], civicApi.getReps);
 router.get('/img', [allowAnon, auth.isOptionalAuthenticated], civicApi.img);
 
 // Log and Health
