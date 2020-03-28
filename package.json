@@ -1,6 +1,6 @@
 {
   "name": "ue-civic",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "description": "A microservice to proxy and stream data from teh googleapi civic public api.",
   "private": false,
   "scripts": {
@@ -48,7 +48,7 @@
     "express": "^4.16.4",
     "joi": "^14.0.6",
     "moment": "^2.22.2",
-    "mongoose": "^5.7.5",
+    "mongoose": "^5.9.4",
     "morgan": "^1.6.1",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
@@ -64,14 +64,14 @@
     "chai": "^4.1.1",
     "chai-http": "^3.0.0",
     "eslint": "^4.5.0",
-    "serverless-apigw-binary": "^0.4.4",
-    "serverless-domain-manager": "^2.6.6",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-mocha": "^4.11.0",
     "eslint-plugin-react": "^7.2.1",
     "mocha": "^3.3.0",
+    "serverless-apigw-binary": "^0.4.4",
+    "serverless-domain-manager": "^2.6.6",
     "sinon": "^5.0.10",
     "sinon-mongoose": "^2.1.1"
   },
