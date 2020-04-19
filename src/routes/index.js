@@ -15,12 +15,11 @@ router.get('/', (req, res) => {
 });
 
 router.get('/swagger.json', (req, res) =>  {
+    const swag = yaml.load('./swagger.yaml');
     try{
-        const swag = yaml.load('./swagger.yaml');
         swag.info.version = pJson.version;
         swag.info.description = swag.info.description.replace('{{IMPLEMENTER}}', config.IMPLEMENTER);
-        if (config.SWAGGER) swag.servers = [{url: `${config.PROTOCOL}://${config.SWAGGER}/api`}];
-        if (config.ENV.toLowerCase()==='production' || config.ENV.toLowerCase()==='qa') swag.schemes = ['https'];
+        if (config.SWAGGER) swag.servers = [{ url: `${config.PROTOCOL}://${config.SWAGGER}/api` }];
         res.json(swag);
     }catch (error) {
         console.info(error);
